@@ -1,82 +1,58 @@
 package com.mcmacker4.mars.application.display;
 
+import org.joml.Vector2i;
+import org.joml.Vector3f;
+
 /**
  * Created by McMacker4 on 09/07/2016.
  */
 public class DisplaySettings {
 
-    private int width, height;
-    private boolean fullscreen;
-
-    private boolean vSync;
-    private boolean resizable;
-
     private String title;
+    private Vector2i resolution;
+    private boolean resizable;
+    private boolean fullscreen;
+    private boolean vsync;
+    private Vector3f clearColor;
 
-    public DisplaySettings() {
-        width = 1280; height = 720;
-        fullscreen = false;
-        vSync = false;
-        resizable = false;
+    public DisplaySettings(String title, Vector2i resolution, boolean resizable, boolean fullscreen, boolean vsync, Vector3f clearColor) {
+        this.title = title;
+        this.resolution = resolution;
+        this.resizable = resizable;
+        this.fullscreen = fullscreen;
+        this.vsync = vsync;
+        this.clearColor = clearColor;
     }
 
-    public String getTitle() {
+    protected String getTitle() {
         return title;
     }
 
-    public DisplaySettings setTitle(String title) {
-        this.title = title;
-        return this;
+    protected int getWidth() {
+        return resolution.x;
     }
 
-    public boolean isResizable() {
+    protected int getHeight() {
+        return resolution.y;
+    }
+
+    protected Vector2i getResolution() {
+        return resolution;
+    }
+
+    protected boolean isResizable() {
         return resizable;
     }
 
-    public DisplaySettings setResizable(boolean resizable) {
-        this.resizable = resizable;
-        return this;
-    }
-
-    public DisplaySettings setResolution(int width, int height) {
-        setWidth(width);
-        setHeight(height);
-        return this;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public DisplaySettings setWidth(int width) {
-        this.width = width;
-        return this;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public DisplaySettings setHeight(int height) {
-        this.height = height;
-        return this;
-    }
-
-    public boolean isFullscreen() {
+    protected boolean isFullscreen() {
         return fullscreen;
     }
 
-    public DisplaySettings setFullscreen(boolean fullscreen) {
-        this.fullscreen = fullscreen;
-        return this;
+    protected boolean isVsync() {
+        return vsync;
     }
 
-    public boolean isvSync() {
-        return vSync;
-    }
-
-    public DisplaySettings setvSync(boolean vSync) {
-        this.vSync = vSync;
-        return this;
+    protected Vector3f getClearColor() {
+        return clearColor;
     }
 }

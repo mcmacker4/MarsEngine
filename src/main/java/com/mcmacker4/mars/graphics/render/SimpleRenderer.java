@@ -1,4 +1,4 @@
-package com.mcmacker4.mars.render;
+package com.mcmacker4.mars.graphics.render;
 
 import java.util.Queue;
 

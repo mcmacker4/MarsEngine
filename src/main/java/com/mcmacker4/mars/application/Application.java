@@ -1,11 +1,10 @@
 package com.mcmacker4.mars.application;
 
 import com.mcmacker4.mars.application.display.Display;
-import com.mcmacker4.mars.application.display.DisplaySettings;
-import com.mcmacker4.mars.log.Log;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
+import com.mcmacker4.mars.application.display.DisplaySettingsBuilder;
+import com.mcmacker4.mars.application.events.Input;
+import com.mcmacker4.mars.application.events.listeners.EventListener;
+import com.mcmacker4.mars.system.log.Log;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
@@ -16,15 +15,12 @@ import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 /**
  * Created by McMacker4 on 09/07/2016.
  */
-public class Application {
+public abstract class Application {
 
     private ApplicationSettings appSettings;
 
-    private Consumer<Application> initMethod;
-    private BiConsumer<Application, Double> updateMethod;
-    private Consumer<Application> renderMethod;
-
     private Display display;
+    private Input input = new Input();
 
     private double lastUpdate = 0;
 
@@ -37,6 +33,7 @@ public class Application {
         createDisplay();
         loop();
         destroy();
+        Log.info("Goodbye");
     }
 
     /**
@@ -52,25 +49,18 @@ public class Application {
         }
     }
 
-    private void init() {
-        if(initMethod != null)
-            initMethod.accept(this);
-    }
+    public abstract void init();
 
     private void update() {
-        if(updateMethod != null) {
-            //Calculate the elapsed time between last frame and this frame.
-            double now = glfwGetTime();
-            double delta = now - lastUpdate;
-            lastUpdate = now;
-            //Call the update method.
-            updateMethod.accept(this, delta);
-        }
+        //Calculate the elapsed time between last frame and this frame.
+        double now = glfwGetTime();
+        double delta = now - lastUpdate;
+        lastUpdate = now;
+        //TODO: Update stuff
     }
 
     private void render() {
-        if(renderMethod != null)
-            renderMethod.accept(this);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     /**
@@ -81,49 +71,12 @@ public class Application {
         glfwTerminate();
     }
 
-    /**
-     * Clear the Color and Buffer bits of the current FrameBuffer.
-     */
-    public void clear() {
-        validateContext();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    public void addEventListener(EventListener listener) {
+        input.addListener(listener);
     }
 
-    /**
-     * Set the method that is going to be called on init event.
-     * @param init the consumer (lambda?) to be called on init.
-     */
-    public void setInitMethod(Consumer<Application> init) {
-        this.initMethod = init;
-    }
-
-    /**
-     * Set the update method to be called every frame.
-     * This should handle all the dynamic changes of the game.
-     * @param update the update method.
-     */
-    public void setUpdateMethod(BiConsumer<Application, Double> update) {
-        this.updateMethod = update;
-    }
-
-    /**
-     * Set the render method to be called every frame.
-     * This should handle the rendering part of the game.
-     * @param render the render method.
-     */
-    public void setRenderMethod(Consumer<Application> render) {
-        this.renderMethod = render;
-    }
-
-    /**
-     * Should only be called from the main thread.
-     * Checks if the display has been created.
-     * If it has been created there probably is an
-     * OpenGL context bound to the current thread.
-     */
-    private void validateContext() {
-        if(display == null)
-            throw new IllegalStateException("No context.");
+    public boolean removeEventListener(EventListener listener) {
+        return input.removeListener(listener);
     }
 
     /**
@@ -133,11 +86,15 @@ public class Application {
         //If displaySettings is null, use default settings.
         if(appSettings.getDisplaySettings() == null) {
             Log.warning("DisplaySettings is null. Launching with default DisplaySettings.");
-            appSettings.setDisplaySettings(new DisplaySettings().setTitle("Mars Engine"));
+            appSettings.setDisplaySettings(new DisplaySettingsBuilder().create());
         }
         //Create display
         display = new Display(appSettings.getDisplaySettings());
         printSystemInfo();
+        //Set callbacks
+        display.setKeyCallback(input.getKeyCallback());
+        display.setMouseButtonCallback(input.getMouseBtnCallback());
+        display.setCursorPosCallback(input.getCursorPosCallback());
         //Initialize the timer
         lastUpdate = glfwGetTime();
     }
@@ -148,11 +105,11 @@ public class Application {
      */
     private void printSystemInfo() {
         Log.info("System information: " + "\r\n"
-                + "GPU Vendor: " + glGetString(GL_VENDOR) + "\r\n"
-                + "GPU Model: " + glGetString(GL_RENDERER) + "\r\n"
-                + "OpenGL: " + glGetString(GL_VERSION) + "\r\n"
-                + "GLSL: " + glGetString(GL_SHADING_LANGUAGE_VERSION) + "\r\n"
-                + "Extensions: " + (glGetString(GL_EXTENSIONS) == null ? "NONE" : glGetString(GL_EXTENSIONS))
+                + "\t\t\t\tGPU Vendor: " + glGetString(GL_VENDOR) + "\r\n"
+                + "\t\t\t\tGPU Model: " + glGetString(GL_RENDERER) + "\r\n"
+                + "\t\t\t\tOpenGL: " + glGetString(GL_VERSION) + "\r\n"
+                + "\t\t\t\tGLSL: " + glGetString(GL_SHADING_LANGUAGE_VERSION) + "\r\n"
+                + "\t\t\t\tExtensions: " + (glGetString(GL_EXTENSIONS) == null ? "NONE" : glGetString(GL_EXTENSIONS))
         );
     }
 

@@ -1,4 +1,4 @@
-package com.mcmacker4.mars.log;
+package com.mcmacker4.mars.system.log;
 
 import java.io.PrintStream;
 import java.util.Calendar;
@@ -11,22 +11,19 @@ public class Log {
 
     public static void info(String msg) {
         printTime();
-        String m = msg.replace("\r\n", "\r\n\t\t\t\t");
-        System.out.println("INFO: " + m);
+        System.out.println("INFO: " + msg);
         System.out.flush();
     }
 
     public static void warning(String msg) {
         printTime();
-        String m = msg.replaceAll("\r\n", "\r\n\t\t\t\t");
-        System.out.println("WARNING: " + m);
+        System.out.println("WARNING: " + msg);
         System.out.flush();
     }
 
     public static void error(String msg) {
         printTime(System.err);
-        String m = msg.replace("\r\n", "\r\n\t\t\t\t");
-        System.err.println("ERROR: " + m);
+        System.err.println("ERROR: " + msg);
         System.err.flush();
     }
 

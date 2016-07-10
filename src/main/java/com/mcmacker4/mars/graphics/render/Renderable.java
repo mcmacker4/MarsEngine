@@ -1,4 +1,4 @@
-package com.mcmacker4.mars.render;
+package com.mcmacker4.mars.graphics.render;
 
 /**
  * Created by McMacker4 on 09/07/2016.

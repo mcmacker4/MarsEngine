@@ -1,5 +1,10 @@
 package com.mcmacker4.mars.application.display;
 
+import com.mcmacker4.mars.application.events.Input;
+import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
+import org.lwjgl.glfw.GLFWKeyCallback;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 
@@ -39,12 +44,27 @@ public class Display {
 
         glfwMakeContextCurrent(glfw_window);
 
-        glfwSwapInterval(settings.isvSync() ? 1 : 0);
+        glfwSwapInterval(settings.isVsync() ? 1 : 0);
 
         GL.createCapabilities();
 
         glfwShowWindow(glfw_window);
 
+        Vector3f cc = settings.getClearColor();
+        glClearColor(cc.x, cc.y, cc.z, 1.0f);
+
+    }
+
+    public void setKeyCallback(GLFWKeyCallback callback) {
+        glfwSetKeyCallback(glfw_window, callback);
+    }
+
+    public void setMouseButtonCallback(GLFWMouseButtonCallback callback) {
+        glfwSetMouseButtonCallback(glfw_window, callback);
+    }
+
+    public void setCursorPosCallback(GLFWCursorPosCallback callback) {
+        glfwSetCursorPosCallback(glfw_window, callback);
     }
 
     /**

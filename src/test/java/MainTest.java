@@ -1,38 +1,43 @@
 import com.mcmacker4.mars.application.Application;
 import com.mcmacker4.mars.application.ApplicationSettings;
-import com.mcmacker4.mars.application.display.DisplaySettings;
-
-import static org.lwjgl.opengl.GL11.glClearColor;
+import com.mcmacker4.mars.application.display.DisplaySettingsBuilder;
+import com.mcmacker4.mars.application.events.Input;
+import com.mcmacker4.mars.application.events.KeyboardEvent;
+import com.mcmacker4.mars.application.events.MouseButtonEvent;
+import com.mcmacker4.mars.application.events.CursorMoveEvent;
+import com.mcmacker4.mars.application.events.listeners.KeyboardListener;
+import com.mcmacker4.mars.application.events.listeners.MouseButtonListener;
+import com.mcmacker4.mars.application.events.listeners.CursorPosListener;
+import com.mcmacker4.mars.system.log.Log;
 
 /**
  * Created by McMacker4 on 09/07/2016.
  */
-public class MainTest {
+public class MainTest extends Application implements KeyboardListener, CursorPosListener, MouseButtonListener {
 
-    private void start() {
-        Application application = new Application(new ApplicationSettings().setDisplaySettings(
-                new DisplaySettings().setTitle("My new Game Engine.")
-        ));
-        application.setInitMethod(this::init);
-        application.setUpdateMethod(this::update);
-        application.setRenderMethod(this::render);
-        application.start();
+    public MainTest(ApplicationSettings settings) {
+        super(settings);
     }
 
-    private void init(Application app) {
-        glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
+    @Override
+    public void init() {
+        addEventListener(this);
     }
 
-    private void update(Application app, double delta) {
-
+    @Override
+    public void onKeyEvent(KeyboardEvent event) {
+        Log.info("Key Event");
     }
 
-    private void render(Application app) {
-        app.clear();
+    @Override
+    public void onMouseButtonEvent(MouseButtonEvent event) {
+    }
+
+    @Override
+    public void onCursorMove(CursorMoveEvent event) {
     }
 
     public static void main(String[] args) {
-        new MainTest().start();
+        new MainTest(new ApplicationSettings()).start();
     }
-
 }
