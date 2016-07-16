@@ -89,4 +89,7 @@ public class Display {
         glfwDestroyWindow(glfw_window);
     }
 
+    public long getWindow() {
+        return glfw_window;
+    }
 }

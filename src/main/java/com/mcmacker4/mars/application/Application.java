@@ -6,9 +6,7 @@ import com.mcmacker4.mars.application.events.Input;
 import com.mcmacker4.mars.application.events.listeners.EventListener;
 import com.mcmacker4.mars.system.log.Log;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
 
@@ -134,6 +132,10 @@ public abstract class Application {
      */
     private void pollEvents() {
         glfwPollEvents();
+    }
+
+    public boolean isKeyDown(int key) {
+        return glfwGetKey(display.getWindow(), key) == GLFW_PRESS;
     }
 
 }
