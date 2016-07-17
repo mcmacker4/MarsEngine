@@ -17,6 +17,8 @@ import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
  */
 public abstract class Application {
 
+    private static Application INSTANCE;
+
     private ApplicationSettings appSettings;
 
     private Display display;
@@ -26,12 +28,21 @@ public abstract class Application {
 
     private double lastUpdate = 0;
 
+    private boolean running;
+
+    private Application() {
+        if(INSTANCE != null && INSTANCE.isRunning()) throw new IllegalStateException("An application is already running.");
+        INSTANCE = this;
+    }
+
     public Application(ApplicationSettings settings) {
-        if(settings == null) throw new IllegalArgumentException("ApplicationSettings is null.");
+        this();
+        if(settings == null) throw new NullPointerException("ApplicationSettings is null.");
         this.appSettings = settings;
     }
 
     public Application(int width, int height, String title) {
+        this();
         this.appSettings = new ApplicationSettings().setDisplaySettings(
                 new DisplaySettingsBuilder().setResolution(width, height).setTitle(title).create()
         );
@@ -39,9 +50,15 @@ public abstract class Application {
 
     public void start() {
         createDisplay();
+        running = true;
         loop();
         destroy();
+        running = false;
         Log.info("Goodbye.");
+    }
+
+    private boolean isRunning() {
+        return running;
     }
 
     /**
@@ -150,6 +167,14 @@ public abstract class Application {
 
     public void removeLayer(Layer layer) {
         layers.remove(layer);
+    }
+
+    public Input getInput() {
+        return input;
+    }
+
+    public static Application getApp() {
+        return INSTANCE;
     }
 
     /**

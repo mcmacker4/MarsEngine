@@ -1,4 +1,4 @@
-package com.mcmacker4.mars.graphics.shading;
+package com.mcmacker4.mars.graphics;
 
 import com.mcmacker4.mars.system.log.Log;
 

@@ -15,10 +15,18 @@ public class Log {
         System.out.flush();
     }
 
+    public static void info(Object object) {
+        info(object.toString());
+    }
+
     public static void warning(String msg) {
         printTime();
         System.out.println("WARNING: " + msg);
         System.out.flush();
+    }
+
+    public static void warning(Object object) {
+        warning(object.toString());
     }
 
     public static void error(String msg) {
@@ -30,6 +38,10 @@ public class Log {
     public static void error(Throwable th) {
         error(th.getMessage());
         th.printStackTrace();
+    }
+
+    public static void error(Object object) {
+        error(object.toString());
     }
 
     private static void printTime() {

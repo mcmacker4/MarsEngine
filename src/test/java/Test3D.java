@@ -11,7 +11,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  */
 public class Test3D extends Application implements KeyboardListener {
 
-    public Test3D() {
+    private Test3D() {
         super(new ApplicationSettings().setDisplaySettings(
                 new DisplaySettingsBuilder().setTitle("My Mars Engine Game.")
                         .setClearColor(0.3f, 0.6f, 0.9f).create()
