@@ -67,6 +67,10 @@ public class Display {
         glfwSetCursorPosCallback(glfw_window, callback);
     }
 
+    public void close() {
+        glfwSetWindowShouldClose(glfw_window, true);
+    }
+
     /**
      * Returns if the window is going to close.
      * @return true if the window is closing.
@@ -89,7 +93,7 @@ public class Display {
         glfwDestroyWindow(glfw_window);
     }
 
-    public long getWindow() {
+    protected long getWindow() {
         return glfw_window;
     }
 }

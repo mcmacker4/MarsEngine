@@ -35,6 +35,11 @@ public class DisplaySettingsBuilder {
         return this;
     }
 
+    public DisplaySettingsBuilder setResolution(int width, int height) {
+        this.resolution = new Vector2i(width, height);
+        return this;
+    }
+
     public DisplaySettingsBuilder setResizable(boolean resizable) {
         this.resizable = resizable;
         return this;

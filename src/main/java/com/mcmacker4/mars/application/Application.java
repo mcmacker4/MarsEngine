@@ -6,6 +6,8 @@ import com.mcmacker4.mars.application.events.Input;
 import com.mcmacker4.mars.application.events.listeners.EventListener;
 import com.mcmacker4.mars.system.log.Log;
 
+import java.util.LinkedList;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_SHADING_LANGUAGE_VERSION;
@@ -20,6 +22,8 @@ public abstract class Application {
     private Display display;
     private Input input = new Input();
 
+    private LinkedList<Layer> layers = new LinkedList<>();
+
     private double lastUpdate = 0;
 
     public Application(ApplicationSettings settings) {
@@ -27,24 +31,35 @@ public abstract class Application {
         this.appSettings = settings;
     }
 
+    public Application(int width, int height, String title) {
+        this.appSettings = new ApplicationSettings().setDisplaySettings(
+                new DisplaySettingsBuilder().setResolution(width, height).setTitle(title).create()
+        );
+    }
+
     public void start() {
         createDisplay();
         loop();
         destroy();
-        Log.info("Goodbye");
+        Log.info("Goodbye.");
     }
 
     /**
      * Simple game loop.
      */
     private void loop() {
-        init();
+        _init();
         while(!display.shouldClose()) {
-            pollEvents();
+            glfwPollEvents();
             update();
             render();
             display.swapBuffers();
         }
+    }
+
+    private void _init() {
+        init();
+        layers.forEach(Layer::init);
     }
 
     public abstract void init();
@@ -54,25 +69,43 @@ public abstract class Application {
         double now = glfwGetTime();
         double delta = now - lastUpdate;
         lastUpdate = now;
-        //TODO: Update stuff
+        layers.forEach((layer) -> layer.update(delta));
     }
 
     private void render() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        layers.forEach(Layer::render);
     }
 
     /**
      * Destroys the display and terminates GLFW.
      */
     private void destroy() {
+        layers.forEach(Layer::destroy);
         display.destroy();
         glfwTerminate();
     }
 
+    /**
+     * Tells the display it should close.
+     */
+    public void exit() {
+        display.close();
+    }
+
+    /**
+     * Add an event listener (implementing some kind of EventListener
+     * @param listener The event listener to add.
+     */
     public void addEventListener(EventListener listener) {
         input.addListener(listener);
     }
 
+    /**
+     * Remove a previously set event listener.
+     * @param listener The event listener to remove.
+     * @return True if the listener was correctly removed. False if not.
+     */
     public boolean removeEventListener(EventListener listener) {
         return input.removeListener(listener);
     }
@@ -111,6 +144,14 @@ public abstract class Application {
         );
     }
 
+    public void pushLayer(Layer layer) {
+        layers.add(layer);
+    }
+
+    public void removeLayer(Layer layer) {
+        layers.remove(layer);
+    }
+
     /**
      * Returns the display of this application.
      * @return Display
@@ -125,17 +166,6 @@ public abstract class Application {
      */
     public ApplicationSettings getAppSettings() {
         return appSettings;
-    }
-
-    /**
-     * Poll input and other events.
-     */
-    private void pollEvents() {
-        glfwPollEvents();
-    }
-
-    public boolean isKeyDown(int key) {
-        return glfwGetKey(display.getWindow(), key) == GLFW_PRESS;
     }
 
 }
